@@ -1,0 +1,83 @@
+Bontas Carol 331CA
+
+Tema 2 APD 
+
+Fiecare intersectie din fiecare task este reprezentata de o clasa ce implementeaza interfata Intersection
+O metoda comuna ce trebuie implementata de fiecare intersectie este setParam(line [])
+ce va vi apelata din ReaderHandlerFactory pentru a initializa diversi parametrii unici pentru fiecare intersectie in parte( nr max de masini , timp asteptare etc.)
+
+Toate intersectiile sunt construite folosing Singleton
+
+A se vedea comentariile din cod pentru detalii amanuntite 
+
+1.Simple_semaphore:
+    - se face un sleep in functie de timpul de asteptare al fiecarei masini
+
+2.Simple_n_roundabout
+    - folosim un semafor ce poate permite doar n masini sa intre 
+    - odata intrate in zona semaforizata se foloseste sleep 
+    - dupa ce termina de dormit iese din zona semaforului
+
+3.Simple_strict_1_car_roundabout
+    - intersectia contine un vector de semafoare binare
+    - semaforul de pe pozitia i va contoriza doar masiniile care au directia i
+    - dupa ce trece de semafor firul asteapta la o bariera de opreste nrDirectii masini
+    - folosim slepp 
+    - eliberam semaforul de pe pozitia directiei firului care se trezeste
+
+4. Simple_strict_x_car_roundabout
+    - folosim un lacat
+    - in zona critica firul va astepta pana cand runda precedenta de fire se termina (folosim o variabila booleana)
+    - folosim un vector de cozi blocante ce permit doar x masini dintr-o directie 
+    - coada blocanta de pe pozitia i se va ocupa doar de masinile de pe directia i
+    - daca firul curent este ultimul ce trebuie lasat (toate celelalte cozi sunt pline doar coada aferenta lui mai are nevoie de un fir ) (metoda checkIfLast)
+    atunci variabila booleana este marcata cu true adica a inceput o noua runda 
+    - daca nu e ultimul fir asteptat atunci este bagat in coada ( folosim put )
+    - asteptam toate firele care au fost puse cu succes in coada la o bariera pentru nrDirectii*X fire
+    - firele scot din coada lor cate o masina si afiseaza
+    - sleep 
+    - asteptam la o bariera similara ca toate firele sa termine de scris
+    - modificam variabila boolean sa arate ca s-a terminat runda 
+    - notificam firele ca am terminat
+5. Simple_max_x_car
+    - folosim un vector de cozi blocante ca la 4 singura difereta fiind ca nu mai trebuie implmentat runda de masini
+
+6.Priority_intersection
+    - daca e masina cu prioritate 
+    - incrementam numarul de masini cu prioritate din intersectie
+    - firul doarme
+    - la sfarsit folosim un lacat si decrementam numarul si notificam masinile fara prioritate care asteapta
+
+    - daca e masina fara prioritate
+    - masina e bagata intr-o coada blocanta 
+    - folosim un lacat : cat timp numarul de masini cu prioritate !=0 masina asteapta
+    - firul scoate din coada o masina 
+    - afiseaza
+    - notifica ca a terminat 
+
+7. Crosswalk
+    - in clasa pedestrians cand pass=true se notifica faptul ca pietonii trebuie sa treaca
+
+    - in handler
+    - cat timp exista pietoni (isFinished()=false ){
+        - daca nu trec pietoni si mesajul precedent nu e green light 
+        - nodificam mesajul firului in green light
+
+        - altfel daca trec pietoni vedem daca mesajul precedent al firului este red light si il updatam daca e diferit
+        - firul asteapta pana cand pietonii termina de trecut (passed = false)
+
+    }
+
+8. Simple_maintenance
+    - masinile cu directia 0 sunt puse in coada blocanta iar cele din directia 1 in alta 
+    - asteptam la o bariera pana vin toate masinile
+    - fiecare fir ia mai intai din coada 0 cate o noua masina sau coada 1 daca a terminat cu coada 0
+    - la final se scot masinile ramase dintr-o coada
+
+10. Railroad
+    - firele sunt puse intr-o coada blocanta
+    - asteptam la o bariera pana cand ajuns toate masinile
+    - doar masina cu id=0 va scrie propozitia cu trenul
+        
+
+
